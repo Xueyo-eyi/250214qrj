@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Love You!</title>
+    <style>
+        body {
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            touch-action: manipulation; /* 移动端手势优化 */
+        }
+
+        .heart {
+            position: relative;
+            width: 100px;
+            height: 90px;
+            animation: heartbeat 1.2s infinite;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent; /* 移除点击高光 */
+            touch-action: manipulation; /* 禁用双击缩放 */
+        }
+
+        .heart:before,
+        .heart:after {
+            position: absolute;
+            content: "";
+            left: 50px;
+            top: 0;
+            width: 50px;
+            height: 80px;
+            background: #ffb3c6;
+            border-radius: 50px 50px 0 0;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+            box-shadow: 0 0 40px #ff1493;
+        }
+
+        .heart:after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            15% { transform: scale(1.3); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.15); }
+            60% { transform: scale(1); }
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .heart {
+                width: 150px;
+                height: 135px;
+            }
+            .heart:before,
+            .heart:after {
+                width: 75px;
+                height: 120px;
+                left: 75px;
+            }
+            .heart:after {
+                left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="heart" id="heart"></div>
+
+    <script>
+        const messages = [
+            "❤️ 铁铁永远爱你！ ❤️",
+            "💖 你是我的一切 💖",
+            "🌟 在一起的第985天 🌟",
+            "💞 永远永远粘着你 💞",
+            "🎉 宝宝情人节快乐~ 🎉",
+            "💕 愿我的未来一直有你 💕"
+        ];
+
+        let clickCount = 0;
+        const heart = document.getElementById('heart');
+        let lastTap = 0;
+
+        function handleInteraction() {
+            // 防重复点击(300ms间隔)
+            const now = Date.now();
+            if (now - lastTap < 300) return;
+            lastTap = now;
+
+            // 显示消息
+            alert(messages[clickCount % messages.length]);
+            
+            // 点击动画
+            heart.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                heart.style.transform = '';
+            }, 200);
+            
+            // 颜色变化
+            if(++clickCount % 3 === 0) {
+                heart.style.filter = `hue-rotate(${Math.random() * 360}deg)`;
+            }
+            
+            // 手机震动(支持的设备)
+            if(navigator.vibrate) navigator.vibrate(50);
+        }
+
+        // 事件监听（同时支持触摸和点击）
+        heart.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            handleInteraction();
+        }, { passive: false });
+
+        heart.addEventListener('click', handleInteraction);
+    </script>
+</body>
+</html>
